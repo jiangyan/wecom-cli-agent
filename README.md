@@ -1,5 +1,7 @@
 # wecom-bot-sample
 
+[简体中文](./README.zh-CN.md)
+
 A sample WeCom smart robot that auto-answers user messages using Claude AI and [wecom-cli](https://github.com/WecomTeam/wecom-cli) skills.
 
 ## How It Works
@@ -25,7 +27,6 @@ The bot has **zero hardcoded knowledge** of WeCom APIs. It loads [wecom-cli skil
 - Node.js >= 18
 - A WeCom smart robot with **Long Connection** API mode enabled
 - An Anthropic API key
-- wecom-cli initialized (`wecom-cli init`)
 
 ## Quick Start
 
@@ -34,13 +35,15 @@ The bot has **zero hardcoded knowledge** of WeCom APIs. It loads [wecom-cli skil
 git clone https://github.com/user/wecom-bot-sample.git
 cd wecom-bot-sample
 
-# 2. Install dependencies
+# 2. Install dependencies (includes wecom-cli binary)
 npm install
 
-# 3. Install wecom-cli skills
-npx wecom-cli skill install WecomTeam/wecom-cli
+# 3. Initialize wecom-cli (required one-time setup)
+#    Configures WeCom bot credentials for CLI API calls.
+#    Credentials are stored encrypted at ~/.config/wecom/bot.enc
+npx wecom-cli init
 
-# 4. Configure
+# 4. Configure environment
 cp .env.example .env
 # Edit .env with your credentials:
 #   WECOM_BOT_ID    — from WeCom admin > Smart Robot > Long Connection
@@ -48,12 +51,11 @@ cp .env.example .env
 #   ANTHROPIC_API_KEY — your Anthropic API key
 #   AI_ENABLED=true
 
-# 5. Initialize wecom-cli (if not done)
-npx wecom-cli init
-
-# 6. Run
+# 5. Run
 npm start
 ```
+
+> **Note:** Skills (SKILL.md files in `skills/`) are already included in the repo — no separate install needed. To update skills or add new ones, run `npx wecom-cli skill install WecomTeam/wecom-cli`.
 
 ## What Can the Bot Do?
 

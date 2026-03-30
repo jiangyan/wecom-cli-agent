@@ -18,6 +18,14 @@ WeCom smart robot bot sample — a Node.js service that connects to WeCom via We
 - **WebSocket long connection** (not webhook): No public URL needed, no message encryption, supports streaming replies. Based on https://developer.work.weixin.qq.com/document/path/101463
 - **Native binary resolution**: On Windows, `execFile` with `.cmd` shims mangles JSON args. We resolve the native `wecom-cli.exe` directly from `node_modules/@wecom/cli-win32-x64/bin/`.
 
+## Setup
+
+1. `npm install` — installs all deps including `@wecom/cli` (provides the `wecom-cli` binary)
+2. `cp .env.example .env` — fill in credentials
+3. `npx wecom-cli init` — **required one-time setup**. Interactively configures WeCom bot credentials, stored encrypted at `~/.config/wecom/bot.enc`. The `wecom-cli` binary needs this to authenticate API calls.
+
+Skills (SKILL.md files in `skills/`) are already committed to the repo — no install step needed for basic usage.
+
 ## Commands
 
 ```bash
@@ -28,13 +36,15 @@ npm run dev        # Dev mode with auto-reload (node --watch)
 ## Environment Variables
 
 See `.env.example`. Key vars:
-- `WECOM_BOT_ID`, `WECOM_SECRET` — From WeCom admin > Smart Robot > Long Connection
+- `WECOM_BOT_ID`, `WECOM_SECRET` — From WeCom admin > Smart Robot > Long Connection (for WebSocket)
 - `ANTHROPIC_API_KEY` — Anthropic API key (SDK reads automatically)
 - `AI_ENABLED` — `true` to enable AI replies, `false` for echo mode
 - `AI_MODEL` — Default `claude-sonnet-4-6`
 - `MAX_ROUNDS` — Max tool-calling rounds per message (default 999)
 
-## Adding Skills
+Note: `WECOM_BOT_ID`/`WECOM_SECRET` in `.env` are for the WebSocket connection. The `wecom-cli` binary uses separate credentials configured via `wecom-cli init` (stored at `~/.config/wecom/bot.enc`).
+
+## Adding / Updating Skills
 
 ```bash
 npx wecom-cli skill install WecomTeam/wecom-cli
