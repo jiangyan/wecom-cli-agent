@@ -31,7 +31,10 @@ if (!WECOM_BOT_ID || !WECOM_SECRET) {
 const bot = new WeComBot(WECOM_BOT_ID, WECOM_SECRET);
 
 bot.on("ready", () => {
-  console.log(`\n  WeCom Bot ready | AI: ${AI_ENABLED === "true" ? "ON" : "OFF"}\n`);
+  console.log(`\n  WeCom Bot ready`);
+  console.log(`  AI:    ${AI_ENABLED === "true" ? "ON" : "OFF"}  |  Model: ${process.env.AI_MODEL || "claude-sonnet-4-6"}`);
+  console.log(`  Bot:   ${WECOM_BOT_ID}`);
+  console.log(``);
 });
 
 bot.on("event:enter_chat", (data) => {
