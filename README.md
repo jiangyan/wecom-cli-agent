@@ -1,6 +1,8 @@
-# wecom-bot-sample
+# wecom-cli-agent / 基于企微CLI + 企微机器人构建的Agent
 
 [简体中文](./README.zh-CN.md)
+
+<img width="810" height="959" alt="image" src="https://github.com/user-attachments/assets/c561df73-f449-4b9b-9289-290a293880d8" />
 
 A sample WeCom smart robot that auto-answers user messages using Claude AI or OpenAI and [wecom-cli](https://github.com/WecomTeam/wecom-cli) skills.
 
