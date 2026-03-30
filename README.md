@@ -80,9 +80,11 @@ wecom-bot-sample/
 ├── index.js              # Bot entry — WebSocket lifecycle, message routing
 ├── lib/
 │   ├── wecom-ws.js       # WeComBot class — WeCom WebSocket protocol
-│   ├── ai-handler.js     # Anthropic SDK — agentic loop with tool calling
-│   └── tools.js          # Skill loader + wecom-cli executor
-│   └── auth-chatgpt.js  # ChatGPT OAuth — PKCE login, token refresh
+│   ├── ai-handler.js     # AI agentic loop (Anthropic + OpenAI) with tool calling
+│   ├── tools.js          # Skill loader + wecom-cli executor
+│   ├── auth-chatgpt.js   # ChatGPT OAuth — PKCE login, token refresh
+│   └── chat-history.js   # SQLite conversation history + compaction
+├── data/                 # SQLite database (gitignored)
 ├── scripts/              # CLI utilities
 │   └── login-chatgpt.js  # ChatGPT OAuth login (npm run login)
 ├── skills/               # Installed wecom-cli skills (SKILL.md files)
@@ -109,6 +111,8 @@ wecom-bot-sample/
 | `MAX_TOKENS` | No | `16384` | Max output tokens per AI response |
 | `WELCOME_MESSAGE` | No | `Hello! I'm the smart assistant...` | Welcome message on enter_chat |
 | `SKILLS_DIR` | No | `./skills/` | Path to skills directory |
+| `MAX_HISTORY_TOKENS` | No | `100000` | Max estimated tokens of history per session |
+| `SESSION_TTL_MINUTES` | No | `60` | Session inactivity timeout (minutes) |
 
 ## ChatGPT OAuth (No API Key)
 
@@ -135,6 +139,7 @@ Tokens are stored at `~/.wecom-bot/auth.json` and auto-refreshed. Re-run `npm ru
 - **Meeting cards** — Rich template cards for created meetings (clickable join link)
 - **Auto-reconnect** — Heartbeat every 30s, reconnects on disconnect
 - **Echo mode** — Set `AI_ENABLED=false` to test without AI (echoes messages back)
+- **Conversation memory** — Multi-turn context persisted in SQLite, auto-compacts when nearing context limits
 
 ## WeCom API Reference
 

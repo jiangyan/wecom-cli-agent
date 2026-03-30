@@ -1,5 +1,8 @@
 node_modules/
 
+# Chat history database
+data/
+
 # Local hidden folder
 .*/
 

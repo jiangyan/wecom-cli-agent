@@ -5,6 +5,16 @@
 import "dotenv/config";
 import { WeComBot } from "./lib/wecom-ws.js";
 import { generateReply } from "./lib/ai-handler.js";
+import { ChatHistory } from "./lib/chat-history.js";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const chatHistory = new ChatHistory({
+  dbPath: process.env.HISTORY_DB || join(__dirname, "data", "history.db"),
+  maxHistoryTokens: parseInt(process.env.MAX_HISTORY_TOKENS || "100000", 10),
+  sessionTtlMs: parseInt(process.env.SESSION_TTL_MINUTES || "60", 10) * 60_000,
+});
 
 const {
   WECOM_BOT_ID,
@@ -32,6 +42,11 @@ bot.on("message", async (data) => {
   const reqId = data.headers.req_id;
   const msgType = data.body?.msgtype;
   const fromUser = data.body?.from?.userid;
+  const chatType = data.body?.chattype;
+  const chatId = data.body?.chatid;
+
+  // Session key: userid for single chats, chatid for group chats
+  const sessionKey = chatType === "group" && chatId ? chatId : fromUser;
 
   // Extract text (text + voice supported; reject others)
   let userMessage = "";
@@ -45,16 +60,18 @@ bot.on("message", async (data) => {
   userMessage = userMessage.replace(/^@\S+\s*/, "").trim();
   if (!userMessage) return;
 
-  console.log(`[msg] ${fromUser}: ${userMessage}`);
+  console.log(`[msg] ${fromUser}${chatType === "group" ? `@${chatId}` : ""}: ${userMessage}`);
 
   if (AI_ENABLED !== "true") {
     bot.replyMarkdown(reqId, `> ${userMessage}\n\n*Echo mode. Set AI_ENABLED=true for AI.*`);
     return;
   }
 
+  const history = chatHistory.getHistory(sessionKey);
   const streamId = bot.replyStream(reqId, "Thinking...", { finish: false });
   try {
-    const { text, meetingCard } = await generateReply(userMessage);
+    const { text, meetingCard } = await generateReply(userMessage, history);
+    chatHistory.addTurn(sessionKey, userMessage, text);
     bot.replyStream(reqId, text, { streamId, finish: true });
     if (meetingCard) bot.replyMeetingCard(reqId, meetingCard);
   } catch (err) {
@@ -69,7 +86,7 @@ bot.on("event:feedback_event", (data) => {
 
 bot.on("error", (err) => console.error("[bot]", err.message));
 
-const shutdown = () => { bot.disconnect(); process.exit(0); };
+const shutdown = () => { chatHistory.close(); bot.disconnect(); process.exit(0); };
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 

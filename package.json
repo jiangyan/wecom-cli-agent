@@ -11,6 +11,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@wecom/cli": "^0.1.1",
+    "better-sqlite3": "^12.8.0",
     "dotenv": "^16.5.0",
     "openai": "^6.33.0",
     "ws": "^8.18.0"
