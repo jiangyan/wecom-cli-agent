@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "wecomcli-create-meeting": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "502a799b1269b7da2d66167915c11b0b2cbae18c730e13e35a2a1a0d2fb5bd5c"
+    },
+    "wecomcli-edit-meeting": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "3c66b245060b48bbdb927a347e02c8f06672b13c3f6a0c3c0d7e484d32d74ee2"
+    },
+    "wecomcli-edit-todo": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "19d7bf1d3f1030fdae2177d672642f3555659e65f94a045e96c62e18cce145e4"
+    },
+    "wecomcli-get-meeting": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "fc2ac64b9f013c79930986b765674ddf5e1ddf99990589cd0e548fdb887bc06d"
+    },
+    "wecomcli-get-msg": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "a4f31c4eaddec6f1c293ee8cd2b1030d262282e2bb7ba4cc4057223c76d95a79"
+    },
+    "wecomcli-get-todo-detail": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "07de0b3f7e37114157897fca6b33d201ca9dd0d115f55a798f9d4343a88ca30b"
+    },
+    "wecomcli-get-todo-list": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "a704b03e83f6de7cd1bc9e25fa68852e9f4eb4691229c46e8118965b72230e30"
+    },
+    "wecomcli-lookup-contact": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "11ff55a72309b87dc120e7cf2941a5d8092a8814ddfb1e2ecae80cbb08228cd4"
+    },
+    "wecomcli-manage-doc": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "c256767f80765a4631b58092fc30bf6f803e5d45f2bb366f1eb1d547b864fa14"
+    },
+    "wecomcli-manage-schedule": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "eeb0d122befe122e26ad7bc6c3aefec4c816ba455c6a720acdc86fe7cd424c5d"
+    },
+    "wecomcli-manage-smartsheet-data": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "f1611925df9cb001903654072107eeb108354fa081121401a271e39257568ad6"
+    },
+    "wecomcli-manage-smartsheet-schema": {
+      "source": "WeComTeam/wecom-cli",
+      "sourceType": "github",
+      "computedHash": "746b7874284eabf7abbfc7a07b698ec7fe9fcc0fac77f4b38d3c9837a72e58a9"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "wecom-bot",
+  "version": "0.1.0",
+  "description": "WeCom smart robot auto-answer service (WebSocket long connection)",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@wecom/cli": "^0.1.1",
+    "dotenv": "^16.5.0",
+    "ws": "^8.18.0"
+  }
+}
