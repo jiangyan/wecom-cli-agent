@@ -22,6 +22,16 @@ User messages bot in WeCom
 
 The bot has **zero hardcoded knowledge** of WeCom APIs. It loads [wecom-cli skills](https://github.com/WecomTeam/wecom-cli) (SKILL.md files) as system prompt context, and the AI model figures out which commands to call by reading the docs.
 
+### How Skills Flow into AI Calls
+
+```
+npx wecom-cli skill install        .agents/skills/        skills/          loadSkills()        system prompt        AI model
+  downloads SKILL.md files  ──→  actual files here  ←── symlinks  ──→  reads content  ──→  injected as text  ──→  reads docs & calls
+                                                                                                                  wecom_cli tool
+```
+
+`skills/` are **relative symlinks** to `.agents/skills/`. Running `npx wecom-cli skill install WecomTeam/wecom-cli` updates the source files — restart the bot and the AI automatically learns the new capabilities. No code changes needed.
+
 ## Prerequisites
 
 - Node.js >= 18

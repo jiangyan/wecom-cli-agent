@@ -17,7 +17,14 @@ WeCom smart robot bot sample — a Node.js service that connects to WeCom via We
 
 ## Key Design Decisions
 
-- **Skills-as-context pattern**: Instead of hardcoding tool schemas for each wecom-cli command, we load SKILL.md files and let Claude read the docs to construct correct CLI calls. One generic `wecom_cli(category, method, args)` tool handles everything.
+- **Skills-as-context pattern**: Instead of hardcoding tool schemas for each wecom-cli command, we load SKILL.md files and let the AI read the docs to construct correct CLI calls. One generic `wecom_cli(category, method, args)` tool handles everything. The skill loading chain:
+  1. `npx wecom-cli skill install` downloads SKILL.md files into `.agents/skills/`
+  2. `skills/` contains relative symlinks → `.agents/skills/` (survives folder renames)
+  3. `loadSkills()` in `lib/tools.js` reads SKILL.md content at startup
+  4. `lib/ai-handler.js` injects skill text into the system prompt
+  5. The AI model reads the docs as context and calls `wecom_cli(category, method, args)`
+
+  Update skills with `npx wecom-cli skill install WecomTeam/wecom-cli` — restart the bot to pick up changes. No code modifications needed.
 - **WebSocket long connection** (not webhook): No public URL needed, no message encryption, supports streaming replies. Based on https://developer.work.weixin.qq.com/document/path/101463
 - **Native binary resolution**: On Windows, `execFile` with `.cmd` shims mangles JSON args. We resolve the native `wecom-cli.exe` directly from `node_modules/@wecom/cli-win32-x64/bin/`.
 - **Persistent chat history**: SQLite DB at `data/history.db` survives restarts. Session key is `userid` for single chats, `chatid` for groups. Automatic compaction removes oldest messages when nearing the context window limit.

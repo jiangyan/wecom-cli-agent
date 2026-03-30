@@ -22,6 +22,16 @@
 
 这个机器人对企业微信 API 没有任何硬编码知识。它会把 [wecom-cli skills](https://github.com/WecomTeam/wecom-cli)（`SKILL.md` 文件）加载为 system prompt 上下文，AI 模型通过阅读文档来决定该调用哪些命令。
 
+### Skills 如何融入 AI 调用
+
+```
+npx wecom-cli skill install        .agents/skills/        skills/          loadSkills()        system prompt        AI 模型
+  下载 SKILL.md 文件        ──→  实际文件存放处     ←── 符号链接  ──→  读取内容      ──→  作为文本注入     ──→  阅读文档并调用
+                                                                                                                  wecom_cli 工具
+```
+
+`skills/` 是指向 `.agents/skills/` 的**相对符号链接**。运行 `npx wecom-cli skill install WecomTeam/wecom-cli` 会更新源文件 —— 重启机器人后，AI 自动学会新能力，无需修改任何代码。
+
 ## 前置要求
 
 - Node.js >= 18
