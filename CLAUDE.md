@@ -2,14 +2,16 @@
 
 ## Project Overview
 
-WeCom smart robot bot sample — a Node.js service that connects to WeCom via WebSocket long connection, receives user messages, and auto-replies using Claude AI with wecom-cli skills.
+WeCom smart robot bot sample — a Node.js service that connects to WeCom via WebSocket long connection, receives user messages, and auto-replies using Claude AI or OpenAI with wecom-cli skills.
 
 ## Architecture
 
 - **index.js** — Entry point. WebSocket bot lifecycle, message routing, streaming replies.
 - **lib/wecom-ws.js** — `WeComBot` class. WeCom WebSocket protocol (subscribe, heartbeat, reconnect, reply methods).
-- **lib/ai-handler.js** — Anthropic SDK agentic loop. Loads skills from `skills/` as system prompt context. Single `wecom_cli` tool.
+- **lib/ai-handler.js** — AI agentic loop supporting Anthropic (Messages API) and OpenAI (Responses API). Provider auto-detected from `AI_MODEL`. Loads skills from `skills/` as system prompt context. Single `wecom_cli` tool. Supports ChatGPT OAuth for subscription-based access (no API key needed).
+- **lib/auth-chatgpt.js** — ChatGPT OAuth (PKCE) flow. Browser-based login, token storage at `~/.wecom-bot/auth.json`, auto-refresh.
 - **lib/tools.js** — Skill loader + wecom-cli binary executor. Resolves native `.exe` on Windows to avoid shell quoting issues.
+- **scripts/login-chatgpt.js** — CLI script for ChatGPT OAuth login (`npm run login`).
 - **skills/** — SKILL.md files installed from `WecomTeam/wecom-cli`. These are NOT hardcoded — the bot reads them at startup and injects into Claude's system prompt. Add/remove skills without code changes.
 
 ## Key Design Decisions
@@ -31,6 +33,7 @@ Skills (SKILL.md files in `skills/`) are already committed to the repo — no in
 ```bash
 npm start          # Production
 npm run dev        # Dev mode with auto-reload (node --watch)
+npm run login      # ChatGPT OAuth login (one-time, opens browser)
 ```
 
 ## Environment Variables
@@ -38,8 +41,11 @@ npm run dev        # Dev mode with auto-reload (node --watch)
 See `.env.example`. Key vars:
 - `WECOM_BOT_ID`, `WECOM_SECRET` — From WeCom admin > Smart Robot > Long Connection (for WebSocket)
 - `ANTHROPIC_API_KEY` — Anthropic API key (SDK reads automatically)
+- `OPENAI_API_KEY` — OpenAI API key (needed when using GPT models)
+- `OPENAI_AUTH_MODE` — `api_key` (default) or `chatgpt` (OAuth via ChatGPT subscription, run `npm run login` first)
 - `AI_ENABLED` — `true` to enable AI replies, `false` for echo mode
-- `AI_MODEL` — Default `claude-sonnet-4-6`
+- `AI_MODEL` — Default `claude-sonnet-4-6`. Use `gpt-5.4` for OpenAI.
+- `MAX_TOKENS` — Max output tokens per response (default 16384)
 - `MAX_ROUNDS` — Max tool-calling rounds per message (default 999)
 
 Note: `WECOM_BOT_ID`/`WECOM_SECRET` in `.env` are for the WebSocket connection. The `wecom-cli` binary uses separate credentials configured via `wecom-cli init` (stored at `~/.config/wecom/bot.enc`).
@@ -56,5 +62,5 @@ Skills appear in `skills/`. Restart the bot to pick them up.
 
 - ESM modules (`"type": "module"` in package.json)
 - No TypeScript — plain JS with JSDoc types where helpful
-- Minimal dependencies: `@anthropic-ai/sdk`, `@wecom/cli`, `ws`, `dotenv`
+- Minimal dependencies: `@anthropic-ai/sdk`, `openai`, `@wecom/cli`, `ws`, `dotenv`
 - Console logging with `[tag]` prefixes: `[ws]`, `[msg]`, `[ai-tool]`, `[ai]`

@@ -2,7 +2,7 @@
 
 [简体中文](./README.zh-CN.md)
 
-A sample WeCom smart robot that auto-answers user messages using Claude AI and [wecom-cli](https://github.com/WecomTeam/wecom-cli) skills.
+A sample WeCom smart robot that auto-answers user messages using Claude AI or OpenAI and [wecom-cli](https://github.com/WecomTeam/wecom-cli) skills.
 
 ## How It Works
 
@@ -11,22 +11,22 @@ User messages bot in WeCom
         |
   WebSocket long connection (wss://openws.work.weixin.qq.com)
         |
-  Bot receives message → calls Claude API (Anthropic SDK)
+  Bot receives message → calls AI API (Anthropic or OpenAI)
         |
-  Claude reads wecom-cli skill docs → calls wecom_cli tool
+  AI reads wecom-cli skill docs → calls wecom_cli tool
         |
   Bot executes wecom-cli command → returns result to Claude
         |
-  Claude generates reply → bot sends streaming response
+  AI generates reply → bot sends streaming response
 ```
 
-The bot has **zero hardcoded knowledge** of WeCom APIs. It loads [wecom-cli skills](https://github.com/WecomTeam/wecom-cli) (SKILL.md files) as system prompt context, and Claude figures out which commands to call by reading the docs.
+The bot has **zero hardcoded knowledge** of WeCom APIs. It loads [wecom-cli skills](https://github.com/WecomTeam/wecom-cli) (SKILL.md files) as system prompt context, and the AI model figures out which commands to call by reading the docs.
 
 ## Prerequisites
 
 - Node.js >= 18
 - A WeCom smart robot with **Long Connection** API mode enabled
-- An Anthropic API key
+- An Anthropic API key or OpenAI API key
 
 ## Quick Start
 
@@ -82,6 +82,9 @@ wecom-bot-sample/
 │   ├── wecom-ws.js       # WeComBot class — WeCom WebSocket protocol
 │   ├── ai-handler.js     # Anthropic SDK — agentic loop with tool calling
 │   └── tools.js          # Skill loader + wecom-cli executor
+│   └── auth-chatgpt.js  # ChatGPT OAuth — PKCE login, token refresh
+├── scripts/              # CLI utilities
+│   └── login-chatgpt.js  # ChatGPT OAuth login (npm run login)
 ├── skills/               # Installed wecom-cli skills (SKILL.md files)
 │   ├── wecomcli-create-meeting/
 │   ├── wecomcli-manage-doc/
@@ -97,12 +100,33 @@ wecom-bot-sample/
 |---|---|---|---|
 | `WECOM_BOT_ID` | Yes | — | Smart robot BotID |
 | `WECOM_SECRET` | Yes | — | Long connection secret |
-| `ANTHROPIC_API_KEY` | Yes | — | Anthropic API key |
+| `ANTHROPIC_API_KEY` | Conditional | — | Anthropic API key (required for Claude models) |
+| `OPENAI_API_KEY` | Conditional | — | OpenAI API key (required for GPT models) |
+| `OPENAI_AUTH_MODE` | No | `api_key` | `api_key` or `chatgpt` (OAuth via subscription) |
 | `AI_ENABLED` | No | `false` | Enable AI replies (`true`/`false`) |
-| `AI_MODEL` | No | `claude-sonnet-4-6` | Claude model to use |
+| `AI_MODEL` | No | `claude-sonnet-4-6` | AI model (`claude-*` for Anthropic, `gpt-*` for OpenAI) |
 | `MAX_ROUNDS` | No | `999` | Max tool-calling rounds per message |
+| `MAX_TOKENS` | No | `16384` | Max output tokens per AI response |
 | `WELCOME_MESSAGE` | No | `Hello! I'm the smart assistant...` | Welcome message on enter_chat |
 | `SKILLS_DIR` | No | `./skills/` | Path to skills directory |
+
+## ChatGPT OAuth (No API Key)
+
+You can use your ChatGPT Plus/Pro subscription instead of an OpenAI API key:
+
+```bash
+# 1. Login with your ChatGPT account (one-time, opens browser)
+npm run login
+
+# 2. Set in .env
+AI_MODEL=gpt-5.4
+OPENAI_AUTH_MODE=chatgpt
+
+# 3. Run as usual
+npm start
+```
+
+Tokens are stored at `~/.wecom-bot/auth.json` and auto-refreshed. Re-run `npm run login` if tokens expire.
 
 ## Features
 
