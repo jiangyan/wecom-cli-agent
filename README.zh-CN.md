@@ -1,4 +1,4 @@
-# wecom-bot-sample
+# wecom-cli-agent / 基于企微CLI + 企微机器人构建的Agent
 
 [English](./README.md)
 
