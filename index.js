@@ -5,6 +5,7 @@
 import "dotenv/config";
 import { WeComBot } from "./lib/wecom-ws.js";
 import { generateReply } from "./lib/ai-handler.js";
+import { setBotSender } from "./lib/tools.js";
 import { ChatHistory } from "./lib/chat-history.js";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,6 +30,7 @@ if (!WECOM_BOT_ID || !WECOM_SECRET) {
 }
 
 const bot = new WeComBot(WECOM_BOT_ID, WECOM_SECRET);
+setBotSender((chatId, content, options) => bot.sendMessage(chatId, content, options));
 
 bot.on("ready", () => {
   console.log(`\n  WeCom Bot ready`);

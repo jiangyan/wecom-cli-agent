@@ -26,6 +26,8 @@ WeCom smart robot bot sample — a Node.js service that connects to WeCom via We
 
   Update skills with `npx wecom-cli skill install WecomTeam/wecom-cli` — restart the bot to pick up changes. No code modifications needed.
 - **WebSocket long connection** (not webhook): No public URL needed, no message encryption, supports streaming replies. Based on https://developer.work.weixin.qq.com/document/path/101463
+- **Codex backend constraints**: ChatGPT OAuth uses `chatgpt.com/backend-api/codex` which is stricter than `api.openai.com`: `input` must be an array (not string), `store` must be `false`, `stream` must be `true`, `max_output_tokens` is not supported, and `previous_response_id` is not supported (conversation must be rebuilt in `input` each turn). Streamed responses are raw JSON objects without the SDK's `output_text` getter — text must be extracted manually from `output[].content[].text`.
+- **Flat vs nested tool args**: Claude (Anthropic) nests command args in `args: {}`, but GPT-5.4 (OpenAI) puts them at the top level alongside `category`/`method`. `executeTool()` in `lib/tools.js` handles both: if `args` exists, use it; otherwise collect everything except `category`/`method` as the args. The OpenAI tool schema uses `additionalProperties: true` to allow this.
 - **Native binary resolution**: On Windows, `execFile` with `.cmd` shims mangles JSON args. We resolve the native `wecom-cli.exe` directly from `node_modules/@wecom/cli-win32-x64/bin/`.
 - **Persistent chat history**: SQLite DB at `data/history.db` survives restarts. Session key is `userid` for single chats, `chatid` for groups. Automatic compaction removes oldest messages when nearing the context window limit.
 
